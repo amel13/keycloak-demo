@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+    keycloak:
+        build: ./build/keycloak
+        volumes:
+            - ./themes:/opt/keycloak/themes
+        ports:
+            - 80:8080
+        depends_on:
+            - postgres
+        environment:
+            KEYCLOAK_ADMIN: admin
+            KEYCLOAK_ADMIN_PASSWORD: admin
+            KC_DB_URL_HOST: postgres
+            KC_DB_DATABASE: keycloak_db
+            KC_DB_USERNAME: db_user
+            KC_DB_PASSWORD: db_password
+            KC_DB_SCHEMA: public
+
+            DEBUG: true
+        command:
+            - '--verbose'
+            - 'start-dev'
+            - '--http-port=8080'
+    postgres:
+        image: postgres:13
+        environment:
+            POSTGRES_DB: keycloak_db
+            POSTGRES_USER: db_user
+            POSTGRES_PASSWORD: db_password
+        volumes:
+            - ./data/postgres:/var/lib/postgresql/data
